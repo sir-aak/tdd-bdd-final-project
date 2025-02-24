@@ -35,11 +35,12 @@ DATABASE_URI = os.getenv(
     "DATABASE_URI", "postgresql://postgres:postgres@localhost:5432/postgres"
 )
 
-
 ######################################################################
 #  P R O D U C T   M O D E L   T E S T   C A S E S
 ######################################################################
 # pylint: disable=too-many-public-methods
+
+
 class TestProductModel(unittest.TestCase):
     """Test Cases for Product Model"""
 
@@ -209,3 +210,13 @@ class TestProductModel(unittest.TestCase):
         self.assertEqual(found.count(), count)
         for product in found:
             self.assertEqual(product.category, category)
+
+    def test_find_by_price(self):
+        """It should Find Products by Price"""
+        products = ProductFactory.create_batch(10)
+        for product in products:
+            product.create()
+        price = products[0].price
+        count = len([product for product in products if product.price == price])
+        found = Product.find_by_price(price=str(price))
+        self.assertEqual(found.count(), count)
